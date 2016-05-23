@@ -74,7 +74,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <img class="img-responsive" src="img/profile.png" alt="">
+                    <img class="img-responsive" src="img/cutmypic.png" alt="">
                     <div class="intro-text">
                         <span class="name">Maksim Trifunovski</span>
                         <hr class="star-light">
@@ -102,7 +102,7 @@
                                 <i class="fa fa-search-plus fa-3x"></i>
                             </div>
                         </div>
-                        <img src="img/portfolio/cabin.png" class="img-responsive" alt="">
+                        <img src="img/portfolio/graph.png" class="img-responsive" alt="">
                     </a>
                 </div>
                 <div class="col-sm-4 portfolio-item">
@@ -115,18 +115,8 @@
                         <img src="img/portfolio/cake.png" class="img-responsive" alt="">
                     </a>
                 </div>
-                <div class="col-sm-4 portfolio-item">
+      <!--          <div class="col-sm-4 portfolio-item">
                     <a href="#portfolioModal3" class="portfolio-link" data-toggle="modal">
-                        <div class="caption">
-                            <div class="caption-content">
-                                <i class="fa fa-search-plus fa-3x"></i>
-                            </div>
-                        </div>
-                        <img src="img/portfolio/circus.png" class="img-responsive" alt="">
-                    </a>
-                </div>
-                <div class="col-sm-4 portfolio-item">
-                    <a href="#portfolioModal4" class="portfolio-link" data-toggle="modal">
                         <div class="caption">
                             <div class="caption-content">
                                 <i class="fa fa-search-plus fa-3x"></i>
@@ -134,8 +124,18 @@
                         </div>
                         <img src="img/portfolio/game.png" class="img-responsive" alt="">
                     </a>
-                </div>
+                </div> -->
                 <div class="col-sm-4 portfolio-item">
+                    <a href="#portfolioModal4" class="portfolio-link" data-toggle="modal">
+                        <div class="caption">
+                            <div class="caption-content">
+                                <i class="fa fa-search-plus fa-3x"></i>
+                            </div>
+                        </div>
+                        <img src="img/portfolio/cabin.png" class="img-responsive" alt="">
+                    </a>
+                </div>
+            <!--    <div class="col-sm-4 portfolio-item">
                     <a href="#portfolioModal5" class="portfolio-link" data-toggle="modal">
                         <div class="caption">
                             <div class="caption-content">
@@ -154,7 +154,7 @@
                         </div>
                         <img src="img/portfolio/submarine.png" class="img-responsive" alt="">
                     </a>
-                </div>
+                </div> -->
             </div>
         </div>
     </section>
@@ -305,21 +305,72 @@
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2">
                         <div class="modal-body">
-                            <h2>Project Title</h2>
+                            <h2>Intrinsic Verification of a Regular Expression Matcher</h2>
                             <hr class="star-primary">
-                            <img src="img/portfolio/cabin.png" class="img-responsive img-centered" alt="">
-                            <p>Use this area of the page to describe your project. The icon above is part of a free icon set by <a href="https://sellfy.com/p/8Q9P/jV3VZ/">Flat Icons</a>. On their website, you can download their free set with 16 icons, or you can purchase the entire set with 146 icons for only $12!</p>
+                        <!--    <img src="img/portfolio/cabin.png" class="img-responsive img-centered" alt=""> -->
+                            <p> During the summer of 2015, I was working on a research project
+                              with Professor Daniel R. Licata and Joomy Korkut. Our goal was
+                              to revisit an algorithm for a Regular Expression Matcher by Rob Harper
+                              and implement it in Agda, while proving its correctness as well. <br>
+                              Since Agda is a total language, hence all computations must terminate, we had
+                              to explicitly deal with the case of the Kleene star regular expression,
+                              since it matches zero or more occurences of it. Hence we used standard
+                              regular expressions which are a subset of regular expressions where Kleene star
+                              is replaced with Kleene plus, which matches one or more occurences instead of zero.
+                              Here is the specification for our matcher function:
+                            </p>
+                            <code>
+                              match : (r : StdRegExp)
+                                → (s : List Char)
+                                → (k : List StdRegExp)
+                                → Maybe (Σ (List Char × List Char) (λ { (p , s') → (p ++ s' ≡ s) × (p ∈Lˢ r) × s' ∈Lᵏ k}))
+                            </code>
+                            <p>
+                            As you can see this function takes a standard regular expression r,
+                            a string (list of characters) s, and a stack of regular expressions that
+                            are yet to be matched k, and returns a value of type Maybe, which means,
+                            it will either return None, if we could not match, or Some pair of strings
+                            p and s', such that p is a prefix of s and s' is a suffix, which together
+                            make up s. Furthermore the regular expression r matches with p, and the
+                            stack of remaining regular expressions k matches with s'. <br>
+                            Hence if we want
+                            to try to match the string "a", with the regular expression (Lit "a"), we would
+                            call match (Lit "a") ["a"] [] and get a result
+                            Some (["a"] , [] , ["a"]++[] = ["a"] , ["a"] ∈Lˢ (Lit "a") , [] ∈Lᵏ []). Notice
+                            we call the function with the empty stack at the beginning. You can check the
+                            <a href="https://github.com/joom/regexp-agda">code</a> for all the cases. <br>
+                            We wrote another type of matcher, which uses a higher order function
+                            continuation passing style, where instead of a stack of regular expressions
+                            that are yet to be matched, we have a function which does that. Here is the
+                            specification of that matcher:
+                            </p>
+                            <code>
+                              match : (C : Set)
+                                  → (r : StdRegExp)
+                                  → (s : List Char)
+                                  → (k : ∀ {p s'} → p ++ s' ≡ s  → p ∈Lˢ r → Maybe C)
+                                  → RecursionPermission s
+                                  → Maybe C
+                            </code>
+                            <p>
+                            In this matcher, we also pass a so called "Recursion Permission" which helps
+                            Agda see that every future recursive call to match has a smaller string, so
+                            that the function terminates. <br>
+                            You can also notice that the way we defined the matchers in both cases, we have
+                            soundness of successful matching, so we have proved soundness intrinsically. We
+                            Proved the completness of our function extrinsically. <br>
+                            In the end we also wrote an extractor, which can extract parts of a string that
+                            match with specific parts of the regular expression, for example if we had a
+                            regular expression for matching emails, and we had the email "johndoe@domain.com",
+                            we can extract [johndoe, domain, com].
+                            </p>
                             <ul class="list-inline item-details">
-                                <li>Client:
-                                    <strong><a href="http://startbootstrap.com">Start Bootstrap</a>
+                                <li>
+                                    <strong><a href="http://dlicata.web.wesleyan.edu/pubs/ktl16regexp/ktl16regexp.pdf">Paper</a>
                                     </strong>
                                 </li>
-                                <li>Date:
-                                    <strong><a href="http://startbootstrap.com">April 2014</a>
-                                    </strong>
-                                </li>
-                                <li>Service:
-                                    <strong><a href="http://startbootstrap.com">Web Development</a>
+                                <li>
+                                    <strong><a href="https://github.com/joom/regexp-agda">Code</a>
                                     </strong>
                                 </li>
                             </ul>
@@ -342,21 +393,28 @@
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2">
                         <div class="modal-body">
-                            <h2>Project Title</h2>
+                            <h2>FoodyCall</h2>
                             <hr class="star-primary">
-                            <img src="img/portfolio/cake.png" class="img-responsive img-centered" alt="">
-                            <p>Use this area of the page to describe your project. The icon above is part of a free icon set by <a href="https://sellfy.com/p/8Q9P/jV3VZ/">Flat Icons</a>. On their website, you can download their free set with 16 icons, or you can purchase the entire set with 146 icons for only $12!</p>
+                            <img src="img/portfolio/foodycall1.png" class="img-responsive img-centered" alt="">
+                            <p>During WesHack 2014, we created a food ordering app for 2 of the university
+                            dining places. The app allows a person to see the menu for the restaurant open
+                            at the current time, and pick desired meal. After selecting the meal, the app
+                            sends a message to the restaurant with the details of the order and waits for a
+                            response. When it receives a confirmation, it gives the customer the order number with which
+                            the customer can then pick up the food. The frontend was written in JS, while the backend
+                            was done in Python, using Flask, and MongoDB for our database. We also used Twilio to handle
+                            sending and receiving messages. You can find the code on the github link below.</p>
                             <ul class="list-inline item-details">
                                 <li>Client:
-                                    <strong><a href="http://startbootstrap.com">Start Bootstrap</a>
+                                    <strong><a href="https://www.wesleyan.edu">Wesleyan University</a>
                                     </strong>
                                 </li>
                                 <li>Date:
-                                    <strong><a href="http://startbootstrap.com">April 2014</a>
+                                    <strong>September 2014
                                     </strong>
                                 </li>
-                                <li>Service:
-                                    <strong><a href="http://startbootstrap.com">Web Development</a>
+                                <li>Code:
+                                    <strong><a href="https://github.com/barca/FoodyCall">FoodyCall</a>
                                     </strong>
                                 </li>
                             </ul>
@@ -416,21 +474,26 @@
                 <div class="row">
                     <div class="col-lg-8 col-lg-offset-2">
                         <div class="modal-body">
-                            <h2>Project Title</h2>
+                            <h2>Effect of climate change on the distribution of Caribou (Rangifer Tarandus)</h2>
                             <hr class="star-primary">
-                            <img src="img/portfolio/game.png" class="img-responsive img-centered" alt="">
-                            <p>Use this area of the page to describe your project. The icon above is part of a free icon set by <a href="https://sellfy.com/p/8Q9P/jV3VZ/">Flat Icons</a>. On their website, you can download their free set with 16 icons, or you can purchase the entire set with 146 icons for only $12!</p>
+                            <img src="img/portfolio/caribou.png" class="img-responsive img-centered" alt="">
+                            <p>An Evolutionary Bioinformatics final project talking about the potential
+                              distribution of the Caribou, its main food source, the Cladonia Rangiferina
+                              and its main predator, Canis Lupus in the year 2070. <br>
+                              The data for the distribution of Caribou and Canis Lupus was gathered from
+                              <a href="http://vertnet.com">vertnet.com</a>, while the data for Cladonia Rangiferina was
+                              gathered from <a href="http://gbif.org">gbif.org</a>. We then analyzed the data using MaxEnt
+                              (Maximum entropy modeling) and global climate predictions obtained from
+                              <a href="http://worldclim.org">worldclim.org</a>. The poster and paper for the project
+                              can be found on the github link below.
+                            </p>
                             <ul class="list-inline item-details">
-                                <li>Client:
-                                    <strong><a href="http://startbootstrap.com">Start Bootstrap</a>
-                                    </strong>
-                                </li>
                                 <li>Date:
-                                    <strong><a href="http://startbootstrap.com">April 2014</a>
+                                    <strong>December 2015
                                     </strong>
                                 </li>
-                                <li>Service:
-                                    <strong><a href="http://startbootstrap.com">Web Development</a>
+                                <li>Code:
+                                    <strong><a href="https://github.com/trifunovski/CaribouProject">GitHub</a>
                                     </strong>
                                 </li>
                             </ul>
